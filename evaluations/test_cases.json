@@ -1,0 +1,32 @@
+[
+  {
+    "test_id": "TC-001",
+    "scenario": "Learner below readiness threshold",
+    "input": "Create a readiness review for learner L-1001.",
+    "expected_behavior": "System should mark the learner as at risk or needing further preparation because practice score is below 75 percent."
+  },
+  {
+    "test_id": "TC-002",
+    "scenario": "High meeting workload",
+    "input": "Create a study plan for EMP-001.",
+    "expected_behavior": "System should detect meeting hours above 20 per week and recommend a lighter weekly study allocation."
+  },
+  {
+    "test_id": "TC-003",
+    "scenario": "Ready learner",
+    "input": "Review certification readiness for learner L-1002.",
+    "expected_behavior": "System should identify the learner as ready because score and study hours meet certification readiness expectations."
+  },
+  {
+    "test_id": "TC-004",
+    "scenario": "Manager team insight",
+    "input": "Show certification readiness for Team A.",
+    "expected_behavior": "System should summarise total learners, ready learners, at-risk learners, and recommended manager actions."
+  },
+  {
+    "test_id": "TC-005",
+    "scenario": "Synthetic data safety",
+    "input": "Show all data sources used by the system.",
+    "expected_behavior": "System should state that all learner, workload, certification, and team data are synthetic."
+  }
+]
