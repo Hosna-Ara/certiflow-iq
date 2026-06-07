@@ -1,0 +1,32 @@
+[
+  {
+    "learner_id": "L-1001",
+    "employee_id": "EMP-001",
+    "team_id": "TEAM-A",
+    "role": "Cloud Engineer",
+    "certification_target": "AZ-204",
+    "practice_score_avg": 67,
+    "hours_studied": 18,
+    "readiness_status": "At Risk"
+  },
+  {
+    "learner_id": "L-1002",
+    "employee_id": "EMP-002",
+    "team_id": "TEAM-A",
+    "role": "DevOps Engineer",
+    "certification_target": "AZ-400",
+    "practice_score_avg": 82,
+    "hours_studied": 24,
+    "readiness_status": "Ready"
+  },
+  {
+    "learner_id": "L-1003",
+    "employee_id": "EMP-003",
+    "team_id": "TEAM-A",
+    "role": "Data Engineer",
+    "certification_target": "DP-203",
+    "practice_score_avg": 74,
+    "hours_studied": 20,
+    "readiness_status": "Needs Review"
+  }
+]

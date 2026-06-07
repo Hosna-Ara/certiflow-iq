@@ -1,0 +1,25 @@
+{
+  "certifications": [
+    {
+      "id": "AZ-204",
+      "role_alignment": ["Cloud Engineer", "Application Developer"],
+      "skills": ["API Development", "Azure Functions", "Azure Storage", "Authentication"],
+      "recommended_hours": 24,
+      "readiness_threshold": 75
+    },
+    {
+      "id": "AZ-400",
+      "role_alignment": ["DevOps Engineer", "Platform Engineer"],
+      "skills": ["CI/CD", "GitHub Actions", "Monitoring", "Infrastructure as Code"],
+      "recommended_hours": 25,
+      "readiness_threshold": 75
+    },
+    {
+      "id": "DP-203",
+      "role_alignment": ["Data Engineer", "Analytics Engineer"],
+      "skills": ["Data Pipelines", "Data Lake", "Spark", "Data Security"],
+      "recommended_hours": 22,
+      "readiness_threshold": 75
+    }
+  ]
+}
