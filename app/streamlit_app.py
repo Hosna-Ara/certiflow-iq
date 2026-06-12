@@ -68,9 +68,53 @@ with tab2:
     )
 
     learner_result = orchestrator.run_learner_review(selected_learner)
+    trace = learner_result["agent_trace"]
 
-    for agent_output in learner_result["agent_trace"]:
-        with st.expander(agent_output["agent"], expanded=True):
+    learning_path = trace[0]
+    study_plan = trace[1]
+    engagement = trace[2]
+    assessment = trace[3]
+    safety = trace[4]
+
+    st.write("### Readiness Summary")
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Certification", learning_path["certification"])
+    col2.metric("Practice Score", f"{assessment['practice_score']}%")
+    col3.metric("Readiness", assessment["readiness"])
+
+    if assessment["readiness"] == "Ready":
+        st.success(assessment["recommendation"])
+    elif assessment["readiness"] == "Needs Review":
+        st.warning(assessment["recommendation"])
+    else:
+        st.error(assessment["recommendation"])
+
+    st.write("### Learning Path")
+    st.write(f"**Role:** {learning_path['role']}")
+    st.write(f"**Recommended skills:** {', '.join(learning_path['recommended_skills'])}")
+    st.caption(learning_path["reasoning"])
+
+    st.write("### Capacity-Aware Study Plan")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Remaining Hours", study_plan["remaining_study_hours"])
+    col2.metric("Weekly Study Hours", study_plan["suggested_weekly_hours"])
+    col3.metric("Estimated Weeks", study_plan["estimated_plan_weeks"])
+
+    st.write(f"**Preferred learning slot:** {study_plan['preferred_slot']}")
+    st.caption(study_plan["reasoning"])
+
+    st.write("### Engagement Recommendation")
+    st.write(engagement["reminder_style"])
+    st.caption(engagement["reasoning"])
+
+    st.write("### Safety Check")
+    st.success(f"Verifier status: {safety['status']}")
+    st.write(", ".join(safety["checks"]))
+
+    st.write("### Technical Agent Trace")
+    for agent_output in trace:
+        with st.expander(agent_output["agent"], expanded=False):
             st.json(agent_output)
 
 with tab3:
