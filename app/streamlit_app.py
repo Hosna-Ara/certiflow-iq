@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -6,6 +7,9 @@ import streamlit as st
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(BASE_DIR))
+
+from agents.local_agents import OrchestratorAgent
 
 
 def load_json(path):
@@ -19,8 +23,9 @@ semantic_model = load_json("data/certification_semantic_model.json")
 
 learners_df = pd.DataFrame(learners)
 workload_df = pd.DataFrame(workload)
-
 merged_df = learners_df.merge(workload_df, on="employee_id", how="left")
+
+orchestrator = OrchestratorAgent()
 
 st.set_page_config(page_title="CertiFlow IQ", layout="wide")
 
@@ -29,27 +34,30 @@ st.caption("Multi-Agent Certification Readiness System for Enterprise Teams")
 
 st.info("Demo uses synthetic data only. No real employee, customer, or personal data is used.")
 
-tab1, tab2, tab3 = st.tabs(["Manager Insights", "Learner Readiness", "Synthetic Data"])
+tab1, tab2, tab3, tab4 = st.tabs([
+    "Manager Insights",
+    "Learner Readiness",
+    "Agent Trace",
+    "Synthetic Data"
+])
 
 with tab1:
     st.subheader("Team Certification Readiness")
 
-    total_learners = len(merged_df)
-    ready_count = (merged_df["readiness_status"] == "Ready").sum()
-    at_risk_count = (merged_df["readiness_status"] == "At Risk").sum()
+    manager_result = orchestrator.run_manager_review()
+    manager_agent = manager_result["agent_trace"][0]
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Total Learners", total_learners)
-    col2.metric("Ready", ready_count)
-    col3.metric("At Risk", at_risk_count)
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Total Learners", manager_agent["total_learners"])
+    col2.metric("Ready", manager_agent["ready"])
+    col3.metric("Needs Review", manager_agent["needs_review"])
+    col4.metric("At Risk", manager_agent["at_risk"])
 
     st.dataframe(merged_df, use_container_width=True)
 
     st.subheader("Manager Summary")
-    st.write(
-        "Team A has mixed certification readiness. Learners below the 75% practice score threshold "
-        "or below recommended study hours should receive adjusted study plans and additional assessment checkpoints."
-    )
+    st.write(manager_agent["manager_summary"])
+    st.caption(manager_agent["reasoning"])
 
 with tab2:
     st.subheader("Learner Readiness Review")
@@ -59,38 +67,42 @@ with tab2:
         merged_df["learner_id"].tolist()
     )
 
-    learner = merged_df[merged_df["learner_id"] == selected_learner].iloc[0]
+    learner_result = orchestrator.run_learner_review(selected_learner)
 
-    st.write("### Learner Profile")
-    st.json(learner.to_dict())
-
-    cert_id = learner["certification_target"]
-    cert_info = next(
-        item for item in semantic_model["certifications"] if item["id"] == cert_id
-    )
-
-    score_gap = cert_info["readiness_threshold"] - learner["practice_score_avg"]
-    hour_gap = cert_info["recommended_hours"] - learner["hours_studied"]
-
-    st.write("### Agent-style Recommendation")
-
-    if learner["practice_score_avg"] >= cert_info["readiness_threshold"] and learner["hours_studied"] >= cert_info["recommended_hours"]:
-        st.success("Assessment Agent: Learner appears ready for certification attempt.")
-    else:
-        st.warning("Assessment Agent: Learner needs further preparation before exam booking.")
-
-    if learner["meeting_hours_per_week"] > 20:
-        st.write("Engagement Agent: High meeting load detected. Recommend lighter weekly study allocation and longer preparation timeline.")
-    else:
-        st.write("Engagement Agent: Workload is manageable. Recommend regular study blocks during preferred learning slot.")
-
-    st.write(
-        f"Study Plan Agent: Focus on {', '.join(cert_info['skills'])}. "
-        f"Practice score gap: {max(score_gap, 0)}%. "
-        f"Recommended study hour gap: {max(hour_gap, 0)} hours."
-    )
+    for agent_output in learner_result["agent_trace"]:
+        with st.expander(agent_output["agent"], expanded=True):
+            st.json(agent_output)
 
 with tab3:
+    st.subheader("Multi-Agent Reasoning Trace")
+
+    trace_mode = st.radio(
+        "Select trace type",
+        ["Manager Review", "Learner Review"],
+        horizontal=True
+    )
+
+    if trace_mode == "Manager Review":
+        result = orchestrator.run_manager_review()
+    else:
+        selected_trace_learner = st.selectbox(
+            "Select learner for trace",
+            merged_df["learner_id"].tolist(),
+            key="trace_learner"
+        )
+        result = orchestrator.run_learner_review(selected_trace_learner)
+
+    st.write("### Request Type")
+    st.write(result["request_type"])
+
+    st.write("### Agent Execution Order")
+    for index, step in enumerate(result["agent_trace"], start=1):
+        st.write(f"{index}. {step['agent']}")
+
+    st.write("### Full Trace")
+    st.json(result)
+
+with tab4:
     st.subheader("Synthetic Learner Data")
     st.dataframe(learners_df, use_container_width=True)
 
