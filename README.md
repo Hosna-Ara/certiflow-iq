@@ -85,3 +85,12 @@ streamlit run app/streamlit_app.py
 - Foundry resource creation: complete
 - Model deployment: blocked by Azure for Students quota
 - Foundry-ready integration path: documented
+
+## Architecture Diagram
+
+The multi-agent architecture is documented here:
+
+```text
+diagrams/architecture.md
+```
+
