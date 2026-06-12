@@ -34,6 +34,14 @@ st.caption("Multi-Agent Certification Readiness System for Enterprise Teams")
 
 st.info("Demo uses synthetic data only. No real employee, customer, or personal data is used.")
 
+with st.expander("Project Status and Microsoft Foundry Setup", expanded=False):
+    st.write("**Foundry resource:** certiflowAI")
+    st.write("**Foundry project:** proj-default")
+    st.write("**Region:** Southeast Asia")
+    st.write("**Status:** Foundry resource created successfully")
+    st.warning("Model deployment is currently blocked by Azure for Students quota, so this demo runs locally with a Foundry-ready architecture.")
+    st.write("**IQ mapping:** Foundry IQ-ready synthetic knowledge documents, Fabric IQ-inspired semantic model, and Work IQ-inspired workload context.")
+
 tab1, tab2, tab3, tab4 = st.tabs([
     "Manager Insights",
     "Learner Readiness",
