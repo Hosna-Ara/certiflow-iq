@@ -99,6 +99,63 @@ class AssessmentAgent:
         }
 
 
+class GroundedPracticeQuestionAgent:
+    def run(self, learner):
+        cert_id = learner["certification_target"]
+
+        question_bank = {
+            "AZ-204": [
+                {
+                    "question": "Which Azure service is most suitable for running event-driven serverless application logic?",
+                    "answer": "Azure Functions",
+                    "source": "docs/synthetic_engineering_certification_guide.md",
+                    "grounding": "Cloud Engineer focus areas include Azure Functions."
+                },
+                {
+                    "question": "Why should authentication and authorisation be included in the AZ-204 study plan?",
+                    "answer": "Because application security is part of the recommended focus areas for Cloud Engineers.",
+                    "source": "docs/synthetic_engineering_certification_guide.md",
+                    "grounding": "Cloud Engineer focus areas include Authentication and authorisation."
+                }
+            ],
+            "AZ-400": [
+                {
+                    "question": "Which practice helps DevOps Engineers automate build and release workflows?",
+                    "answer": "CI/CD pipelines",
+                    "source": "docs/synthetic_engineering_certification_guide.md",
+                    "grounding": "DevOps Engineer focus areas include CI/CD pipelines."
+                },
+                {
+                    "question": "Why are monitoring and reliability important for AZ-400 preparation?",
+                    "answer": "They support release governance and operational reliability in DevOps workflows.",
+                    "source": "docs/synthetic_engineering_certification_guide.md",
+                    "grounding": "DevOps Engineer focus areas include monitoring and reliability."
+                }
+            ],
+            "DP-203": [
+                {
+                    "question": "Which area should a Data Engineer focus on when preparing for DP-203 data workload design?",
+                    "answer": "Data pipelines and data lake architecture",
+                    "source": "docs/synthetic_engineering_certification_guide.md",
+                    "grounding": "Data Engineer focus areas include data pipelines and data lake architecture."
+                },
+                {
+                    "question": "Why should data security be included in a DP-203 study plan?",
+                    "answer": "Because secure handling of data workloads is part of the Data Engineer focus areas.",
+                    "source": "docs/synthetic_engineering_certification_guide.md",
+                    "grounding": "Data Engineer focus areas include data security."
+                }
+            ]
+        }
+
+        return {
+            "agent": "Grounded Practice Question Agent",
+            "certification": cert_id,
+            "questions": question_bank.get(cert_id, []),
+            "reasoning": "Practice questions are selected from the synthetic certification guide and include source references."
+        }
+
+
 class ManagerInsightsAgent:
     def run(self, all_learners):
         total = len(all_learners)
@@ -150,6 +207,7 @@ class OrchestratorAgent:
         study_plan = StudyPlanGeneratorAgent().run(learner, workload, learning_path)
         engagement = EngagementAgent().run(workload)
         assessment = AssessmentAgent().run(learner, self.semantic_model)
+        practice_questions = GroundedPracticeQuestionAgent().run(learner)
         safety = SafetyVerifierAgent().run()
 
         return {
@@ -160,6 +218,7 @@ class OrchestratorAgent:
                 study_plan,
                 engagement,
                 assessment,
+                practice_questions,
                 safety
             ]
         }
