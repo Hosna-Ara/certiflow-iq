@@ -74,7 +74,8 @@ with tab2:
     study_plan = trace[1]
     engagement = trace[2]
     assessment = trace[3]
-    safety = trace[4]
+    practice_questions = trace[4]
+    safety = trace[5]
 
     st.write("### Readiness Summary")
 
@@ -107,6 +108,12 @@ with tab2:
     st.write("### Engagement Recommendation")
     st.write(engagement["reminder_style"])
     st.caption(engagement["reasoning"])
+
+    st.write("### Grounded Practice Questions")
+    for index, item in enumerate(practice_questions["questions"], start=1):
+        st.write(f"**Q{index}. {item['question']}**")
+        st.write(f"Answer: {item['answer']}")
+        st.caption(f"Source: {item['source']} | Grounding: {item['grounding']}")
 
     st.write("### Safety Check")
     st.success(f"Verifier status: {safety['status']}")
