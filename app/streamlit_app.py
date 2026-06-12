@@ -119,7 +119,19 @@ with tab2:
     st.success(f"Verifier status: {safety['status']}")
     st.write(", ".join(safety["checks"]))
 
+    st.write("### How the Agents Worked")
+
+    st.markdown(f"""
+    1. **Learning Path Curator Agent** mapped the learner's role to the certification target and selected the relevant skills.
+    2. **Study Plan Generator Agent** compared completed study hours against recommended hours and created a workload-aware plan.
+    3. **Engagement Agent** checked meeting load, focus hours, and preferred study slot to recommend realistic reminders.
+    4. **Assessment Agent** compared practice score and study hours against the readiness threshold.
+    5. **Grounded Practice Question Agent** generated practice questions from the approved synthetic certification guide.
+    6. **Safety / Verifier Agent** checked that the output uses synthetic data and avoids sensitive personal information.
+    """)
+
     st.write("### Technical Agent Trace")
+    st.caption("This section shows the raw agent outputs for transparency and debugging.")
     for agent_output in trace:
         with st.expander(agent_output["agent"], expanded=False):
             st.json(agent_output)
